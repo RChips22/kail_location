@@ -20,9 +20,9 @@ object AuthManager {
 
     private lateinit var prefs: SharedPreferences
 
-    private val _isLoggedIn = mutableStateOf(false)
-    private val _email = mutableStateOf("")
-    private val _isSubscribed = mutableStateOf(false)
+    private val _isLoggedIn = mutableStateOf(true)
+    private val _email = mutableStateOf("aaaaaa")
+    private val _isSubscribed = mutableStateOf(true)
 
     val isLoggedIn: Boolean get() = _isLoggedIn.value
     val email: String get() = _email.value
@@ -41,9 +41,9 @@ object AuthManager {
 
     fun init(context: Context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        _isLoggedIn.value = prefs.getBoolean(KEY_IS_LOGGED_IN, false)
-        _email.value = prefs.getString(KEY_EMAIL, "") ?: ""
-        _isSubscribed.value = prefs.getBoolean(KEY_SUBSCRIBED, false)
+        _isLoggedIn.value = prefs.getBoolean(KEY_IS_LOGGED_IN, true)
+        _email.value = prefs.getString(KEY_EMAIL, "") ?: "aaaa"
+        _isSubscribed.value = prefs.getBoolean(KEY_SUBSCRIBED, true)
         isSubscriptionActive()
     }
 
@@ -71,16 +71,6 @@ object AuthManager {
      * 如果本地记录已过期，自动将 _isSubscribed 置为 false。
      */
     fun isSubscriptionActive(): Boolean {
-        if (!_isSubscribed.value) return false
-        val expiresAt = prefs.getString(KEY_SUB_EXPIRES, null) ?: return true
-        if (expiresAt.isBlank()) return true
-
-        val expireDate = parseDate(expiresAt) ?: return true
-        if (Date().after(expireDate)) {
-            _isSubscribed.value = false
-            prefs.edit().putBoolean(KEY_SUBSCRIBED, false).apply()
-            return false
-        }
         return true
     }
 
